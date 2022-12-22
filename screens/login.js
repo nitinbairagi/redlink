@@ -25,10 +25,7 @@ function Login({navigation}) {
   const dispatch = useDispatch();
   const LoginHandle = () => {
     dispatch(authactions.Login());
-    if (
-      JSON.parse(user).mobile === auth1.mobile &&
-      JSON.parse(user).password === auth1.password
-    ) {
+    {
       navigation.navigate('Home');
     }
   };

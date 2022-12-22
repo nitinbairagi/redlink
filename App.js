@@ -4,7 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './screens/login';
 import Register from './screens/Signup';
 import {Provider, useSelector} from 'react-redux';
-import {Text, Button, View} from 'react-native';
+import {Text, Button, View, ActivityIndicator} from 'react-native';
 import Store from './Redux/Redux';
 import Home from './screens/Home';
 import Setting from './screens/Setting';
@@ -18,14 +18,32 @@ const App = () => {
   // const authenticated = useSelector(state => state.auth.isAunthenticated);
   // console.log(authenticated);
   const [user, setuser] = useState('');
+  const [isLoggedin, setisLoggedin] = useState(false);
   useEffect(() => {
-    AsyncStorage.getItem('userdata').then(res => setuser(JSON.parse(res)));
+    setisLoggedin(true);
+    const getuser = async () => {
+      const res = await AsyncStorage.getItem('userdata');
+      setuser(JSON.parse(res));
+      setisLoggedin(false);
+    };
+    getuser();
   }, []);
-
+  // console.log(!user);
+  if (isLoggedin) {
+    return (
+      <ActivityIndicator
+        color={'black'}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}></ActivityIndicator>
+    );
+  }
   return (
     <Provider store={Store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={user ? 'Home' : 'login'}>
+        <Stack.Navigator initialRouteName={!user ? 'Login' : 'Home'}>
           <Stack.Screen
             name="Home"
             options={{
