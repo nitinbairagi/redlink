@@ -3,25 +3,29 @@ import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Login from './screens/login';
 import Register from './screens/Signup';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux';
 import {Text, Button, View} from 'react-native';
 import Store from './Redux/Redux';
 import Home from './screens/Home';
 import Setting from './screens/Setting';
 import List from './screens/List';
+import {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 const bottomTab = createBottomTabNavigator();
 const App = () => {
+  // const authenticated = useSelector(state => state.auth.isAunthenticated);
+  // console.log(authenticated);
+  const [user, setuser] = useState('');
+  useEffect(() => {
+    AsyncStorage.getItem('userdata').then(res => setuser(JSON.parse(res)));
+  }, []);
+
   return (
     <Provider store={Store}>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Login"
-            component={Login}
-          />
+        <Stack.Navigator initialRouteName={user ? 'Home' : 'login'}>
           <Stack.Screen
             name="Home"
             options={{
@@ -56,6 +60,11 @@ const App = () => {
               },
             }}
             component={BottomTab}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Login"
+            component={Login}
           />
           <Stack.Screen name="List" component={List} />
           <Stack.Screen name="SignUp" component={Register} />
